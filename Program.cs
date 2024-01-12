@@ -109,23 +109,26 @@ public class WeatherHandler
         location.Humidity = root.GetProperty("main").GetProperty("humidity").GetInt32();
         location.WindSpeed = Convert.ToInt32(root.GetProperty("wind").GetProperty("speed").GetDouble() * 3.6);
         location.Name = root.GetProperty("name").ToString();
-        location.Weather = root.GetProperty("weather")[0].GetProperty("description").ToString();
+        location.Weather = char.ToUpper(root.GetProperty("weather")[0].GetProperty("description").ToString()[0]) + root.GetProperty("weather")[0].GetProperty("description").ToString().Substring(1); //Édes istenem
         location.WindDirection = GetWindDirString(root.GetProperty("wind").GetProperty("deg").GetInt32());
+        location.Icon = $"https://openweathermap.org/img/wn/{root.GetProperty("weather")[0].GetProperty("icon")}@2x.png";
         //string response = $"Időjárás {location.Name} területén: {location.Weather}, {location.Temperature} °C.";
         var response = new EmbedBuilder()
             .WithTitle($"Időjárás {location.Name} területén")
-            .WithDescription($"{location.Weather}, {location.Temperature} °C.\n {location.WindDirection} szél, {location.WindSpeed} km/h.");
+            .WithDescription($"{location.Weather}, {location.Temperature} °C.\n {location.WindDirection} szél, {location.WindSpeed} km/h.")
+            .WithThumbnailUrl(location.Icon);
         return response;
     }
 
     public class Location
     {
-        public string Name { get; set; }
-        public string Weather { get; set; }
+        public string? Name { get; set; }
+        public string? Weather { get; set; }
         public int Temperature { get; set; }
         public int Humidity { get; set;}
         public double WindSpeed { get; set; }
-        public string WindDirection { get; set; }
+        public string? WindDirection { get; set; }
+        public string? Icon { get; set; }
     }
 
     public static string GetWindDirString(int deg)
