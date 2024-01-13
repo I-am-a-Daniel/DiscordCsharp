@@ -108,9 +108,9 @@ public class WeatherHandler
         location.Temperature = Convert.ToInt32(root.GetProperty("main").GetProperty("temp").GetDouble() - 273);
         location.Humidity = root.GetProperty("main").GetProperty("humidity").GetInt32();
         location.WindSpeed = Convert.ToInt32(root.GetProperty("wind").GetProperty("speed").GetDouble() * 3.6);
-        location.Name = root.GetProperty("name").ToString();
+        location.Name = root.GetProperty("name").ToString() ?? city;
         location.Weather = char.ToUpper(root.GetProperty("weather")[0].GetProperty("description").ToString()[0]) + root.GetProperty("weather")[0].GetProperty("description").ToString().Substring(1); //Édes istenem
-        location.WindDirection = GetWindDirString(root.GetProperty("wind").GetProperty("deg").GetInt32());
+        location.WindDirection = GetWindDirString(root.GetProperty("wind").GetProperty("deg").GetInt32()) ?? "Változó irányú"; // Ritkán, de van olyan, hogy szélirány nincs a jsonben, szélerősség viszont igen
         location.Icon = $"https://openweathermap.org/img/wn/{root.GetProperty("weather")[0].GetProperty("icon")}@2x.png";
         //string response = $"Időjárás {location.Name} területén: {location.Weather}, {location.Temperature} °C.";
         var response = new EmbedBuilder()
@@ -133,7 +133,7 @@ public class WeatherHandler
 
     public static string GetWindDirString(int deg)
     {
-        string direction;
+        string direction = "";
         if (deg > 337 || deg <= 22)
             direction = "Északi";
         else if (deg > 22 && deg <= 67)
@@ -150,8 +150,6 @@ public class WeatherHandler
             direction = "Nyugati";
         else if (deg > 292 && deg <= 337)
             direction = "Északnyugati";
-        else
-            direction = "";
         return direction;
     }
 }
