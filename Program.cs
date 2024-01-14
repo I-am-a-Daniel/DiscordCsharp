@@ -73,9 +73,17 @@ class Program
             case "ping":
                 await command.RespondAsync("Pong"); break;
             case "wr":
-                if(command.Data.Options.Count == 1) //Nincs forecast
+                if (command.Data.Options.Count == 1) //Nincs forecast
                 {
-                    await command.RespondAsync(embed: WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build());
+                    var response = WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value);
+                    if (response != null)
+                    {
+                        await command.RespondAsync(embed: WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build());
+                    }
+                    else
+                    {
+                        await command.RespondAsync("Nincs ilyen város");
+                    }
                 }
                 else                                //Van forecast
                 {
@@ -130,10 +138,19 @@ public class WeatherHandler
 {
     public static EmbedBuilder GetWeatherDataForCity(string city)       //TODO: Error handling, e.g. Non-existing location
     {
-        string json = Weather.GetCurrentWeatherJson(city);
+        string json;
+        try
+        {
+           json = Weather.GetCurrentWeatherJson(city); 
+        }
+        catch (System.Net.WebException)
+        {
+            return null;
+        }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
         Location location = new Location();
+        //int code = root.GetProperty("cod").GetInt32();                //Tulajdonképpen nincs rá szükség
         location.Temperature = Convert.ToInt32(root.GetProperty("main").GetProperty("temp").GetDouble() - 273);
         location.Humidity = root.GetProperty("main").GetProperty("humidity").GetInt32();
         location.WindSpeed = Convert.ToInt32(root.GetProperty("wind").GetProperty("speed").GetDouble() * 3.6);
@@ -141,12 +158,13 @@ public class WeatherHandler
         location.Weather = char.ToUpper(root.GetProperty("weather")[0].GetProperty("description").ToString()[0]) + root.GetProperty("weather")[0].GetProperty("description").ToString()[1..]; //Édes istenem
         location.WindDirection = GetWindDirString(root.GetProperty("wind").GetProperty("deg").GetInt32()) ?? "Változó irányú"; // Ritkán, de van olyan, hogy szélirány nincs a jsonben, szélerősség viszont igen
         location.Icon = $"https://openweathermap.org/img/wn/{root.GetProperty("weather")[0].GetProperty("icon")}@2x.png";
-        //string response = $"Időjárás {location.Name} területén: {location.Weather}, {location.Temperature} °C.";
+        //string response = $"Időjárás {location.Name} területén: {location.Weather}, {location.Temperature} °C.";  //Ha kell majd stringként
         var response = new EmbedBuilder()
             .WithTitle($"Időjárás {location.Name} területén")
             .WithDescription($"{location.Weather}, {location.Temperature} °C.\n {location.WindDirection} szél, {location.WindSpeed} km/h.")
             .WithThumbnailUrl(location.Icon);
         return response;
+
     }
 
     public static EmbedBuilder GetWeatherForecastForCity(string city, int hour)
@@ -170,7 +188,7 @@ public class WeatherHandler
         return response;
     }
 
-    public class Location
+    private class Location
     {
         public string? Name { get; set; }
         public string? Weather { get; set; }
