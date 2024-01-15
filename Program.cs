@@ -21,7 +21,7 @@ public class CommandHandler
                     var response = WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value);
                     if (response != null)
                     {
-                        await command.RespondAsync(embed: WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build());
+                        await command.RespondAsync(embed: WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build()); //FIXME: Reklamál, hogy possible null reference.
                     }
                     else
                     {
@@ -30,7 +30,7 @@ public class CommandHandler
                 }
                 else                                //Van forecast
                 {
-                    var temp = command.Data.Options.FirstOrDefault(param => param.Name == "forecast").Value;  //FIXME: Conversion error
+                    var temp = command.Data.Options.FirstOrDefault(param => param.Name == "forecast").Value;
                     int hours = Convert.ToInt32(temp);
                     if (hours > 100 || hours < 0)
                     {
@@ -44,10 +44,30 @@ public class CommandHandler
                 await command.RespondAsync("Valami nem jó"); break;
         }
     }
+    public static async Task RegisterCommand(string name, string description, params SlashCommandOptionBuilder[] options)
+    {
+        var commandBuilder = new SlashCommandBuilder()
+            .WithName(name)
+            .WithDescription(description);
+        
+        foreach (var option in options)
+        {
+            commandBuilder.AddOption(option);
+        }
+
+        try
+        {
+            await Program._client.CreateGlobalApplicationCommandAsync(commandBuilder.Build());
+        }
+        catch (HttpException exception)
+        {
+            Console.WriteLine(exception.Message);
+        }
+    }
 }
 class Program
 {
-    private DiscordSocketClient _client;
+    public static DiscordSocketClient _client;
 
     static async Task Main(string[] args)
     {
@@ -76,32 +96,17 @@ class Program
     public async Task Client_Ready()
     {
         Console.WriteLine("Parancsok betöltése...");
-        //Pong command
-        var pong_command = new SlashCommandBuilder()
-            .WithName("ping")                                                           //Parancsok mindig kisbetűvel
-            .WithDescription("Debug function");
-        try
-        {
-            await _client.CreateGlobalApplicationCommandAsync(pong_command.Build());    // Geci mi ez a function
-        }
-        catch (HttpException exception)
-        {
-            Console.WriteLine(exception.Message);
-        }
-        //Weather command
-        var weather_command = new SlashCommandBuilder()
-            .WithName("wr")
-            .WithDescription("Weather information")
-            .AddOption("city", ApplicationCommandOptionType.String, "City name", isRequired: true)
-            .AddOption("forecast", ApplicationCommandOptionType.Integer, "Forecast in hours", isRequired: false);
-        try
-        {
-            await _client.CreateGlobalApplicationCommandAsync(weather_command.Build());
-        }
-        catch (HttpException exception)
-        {
-            Console.Write(exception.Message);
-        }
+        await CommandHandler.RegisterCommand("pong", "Debug Feature");
+        await CommandHandler.RegisterCommand("wr", "Időjárás lekérdezése", new SlashCommandOptionBuilder()
+            .WithName("település")
+            .WithType(ApplicationCommandOptionType.String)
+            .WithDescription("településnév")
+            .WithRequired(true),
+            new SlashCommandOptionBuilder()
+            .WithName("előrejelzés")
+            .WithType(ApplicationCommandOptionType.Integer)
+            .WithDescription("Hány óra múlva szeretnéd kérni az előrejelzést")
+            .WithRequired(false));
         Console.WriteLine("Parancsok betöltésének vége.");
     }
 
