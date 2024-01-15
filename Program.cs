@@ -6,6 +6,45 @@ using Discord;
 using Discord.Net;
 using Discord.WebSocket;
 
+
+public class CommandHandler
+{
+    public static async Task Execute(SocketSlashCommand command)
+    {
+        switch (command.Data.Name)
+        {
+            case "ping":
+                await command.RespondAsync("Pong"); break;
+            case "wr":
+                if (command.Data.Options.Count == 1) //Nincs forecast
+                {
+                    var response = WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value);
+                    if (response != null)
+                    {
+                        await command.RespondAsync(embed: WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build());
+                    }
+                    else
+                    {
+                        await command.RespondAsync("Nincs ilyen város");
+                    }
+                }
+                else                                //Van forecast
+                {
+                    var temp = command.Data.Options.FirstOrDefault(param => param.Name == "forecast").Value;  //FIXME: Conversion error
+                    int hours = Convert.ToInt32(temp);
+                    if (hours > 100 || hours < 0)
+                    {
+                        await command.RespondAsync("3 és 100 óra közötti időtávot adj meg.", ephemeral: true);
+                    }
+                    else
+                        await command.RespondAsync(embed: WeatherHandler.GetWeatherForecastForCity((string)command.Data.Options.First().Value, hours).Build());
+                }
+                break;
+            default:
+                await command.RespondAsync("Valami nem jó"); break;
+        }
+    }
+}
 class Program
 {
     private DiscordSocketClient _client;
@@ -29,7 +68,7 @@ class Program
             Client_Ready(); // Valami warningot ír rá mert nincs await, majd meglátjuk h baj-e
             return Task.CompletedTask;
         };
-        _client.SlashCommandExecuted += CommandHandler;
+        _client.SlashCommandExecuted += CommandHandler.Execute;
         
         await Task.Delay(-1);
     }
@@ -66,41 +105,6 @@ class Program
         Console.WriteLine("Parancsok betöltésének vége.");
     }
 
-    public async Task CommandHandler(SocketSlashCommand command)
-    {
-        switch (command.Data.Name)
-        {
-            case "ping":
-                await command.RespondAsync("Pong"); break;
-            case "wr":
-                if (command.Data.Options.Count == 1) //Nincs forecast
-                {
-                    var response = WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value);
-                    if (response != null)
-                    {
-                        await command.RespondAsync(embed: WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build());
-                    }
-                    else
-                    {
-                        await command.RespondAsync("Nincs ilyen város");
-                    }
-                }
-                else                                //Van forecast
-                {
-                    var temp = command.Data.Options.FirstOrDefault(param => param.Name == "forecast").Value;  //FIXME: Conversion error
-                    int hours = Convert.ToInt32(temp);
-                    if (hours > 100 || hours < 0)
-                    {
-                        await command.RespondAsync("3 és 100 óra közötti időtávot adj meg.", ephemeral: true);
-                    }
-                    else
-                        await command.RespondAsync(embed: WeatherHandler.GetWeatherForecastForCity((string)command.Data.Options.First().Value, hours).Build());
-                }
-                break;
-            default:
-                await command.RespondAsync("Valami nem jó"); break;
-        }
-    }
     private Task LogAsync(LogMessage log)
     {
         Console.WriteLine(log);
@@ -136,7 +140,7 @@ public class Weather
 
 public class WeatherHandler
 {
-    public static EmbedBuilder GetWeatherDataForCity(string city)       //TODO: Error handling, e.g. Non-existing location
+    public static EmbedBuilder? GetWeatherDataForCity(string city)       //TODO: Error handling, e.g. Non-existing location
     {
         string json;
         try
