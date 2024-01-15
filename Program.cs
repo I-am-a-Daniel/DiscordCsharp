@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Discord;
@@ -65,6 +68,25 @@ public class CommandHandler
         }
     }
 }
+public class Keys
+{
+    public class KeysNotFoundException : Exception 
+    { 
+        public KeysNotFoundException(string message) : base(message) { }
+    }
+    public static string? main;
+    public static string? owm;
+
+
+    public static void Read()
+    {
+        string path = Path.Combine(Directory.GetCurrentDirectory(), "keys.conf");   //TODO: Ne itt legyen
+        StreamReader sr = new StreamReader(path);
+        Keys.main = sr.ReadLine()    ??  throw new KeysNotFoundException("Error while locating Discord API key");
+        Keys.owm = sr.ReadLine()     ??  throw new KeysNotFoundException("Error while locating OWM API key");
+        sr.Close();
+    }
+}
 class Program
 {
     public static DiscordSocketClient _client;
@@ -79,8 +101,10 @@ class Program
     {
         _client = new DiscordSocketClient();
         _client.Log += LogAsync;
+        Keys.Read();
 
-        await _client.LoginAsync(TokenType.Bot, "");
+
+        await _client.LoginAsync(TokenType.Bot, Keys.main);
         await _client.StartAsync();
         _client.Ready += () =>
         {
@@ -128,7 +152,7 @@ public class Utilities
 }
 public class Weather
 {
-    private static string apikey = "";
+    private static string apikey = Keys.owm;
     public static string GetCurrentWeatherJson(string city)
     {
             string url = $"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={apikey}&lang=hu";
