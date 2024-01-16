@@ -12,6 +12,13 @@ public class CommandHandler
                 await command.RespondAsync(WeatherHandler.GetColdestTemperature((string)command.Data.Options.First().Value)); break;
             case "hottest":
                 await command.RespondAsync(WeatherHandler.GetHottestTemperature((string)command.Data.Options.First().Value)); break;
+            case "nextclear":
+            //case "nextsun":               //TODO: Implement alias handling in RegisterCommand()
+                await command.RespondAsync(WeatherHandler.GetNextClear((string)command.Data.Options.First().Value)); break;
+            case "nextrain":
+                await command.RespondAsync(WeatherHandler.GetNextRain((string)command.Data.Options.First().Value)); break;
+            case "nextsnow":
+                await command.RespondAsync(WeatherHandler.GetNextSnow((string)command.Data.Options.First().Value)); break;
             case "pong":
                 await command.RespondAsync("Pong"); break;
             case "wr":

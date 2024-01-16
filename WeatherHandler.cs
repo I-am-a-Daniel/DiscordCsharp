@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Discord;
 
 public class WeatherHandler
@@ -45,6 +44,54 @@ public class WeatherHandler
         string? stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
         return new string($"A következő 5 napban {stamp}-kor lesz a leghidegebb, {temperature} °C.");
 
+    }
+    public static string GetNextClear(string city)
+    {
+        string json = Weather.GetForecastJson(city);
+        JsonDocument jsondoc = JsonDocument.Parse(json);
+        JsonElement root = jsondoc.RootElement;
+        for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
+        {
+            if (root.GetProperty("list")[i].GetProperty("weather")[0].GetProperty("main").ToString() == "Clear")
+            {
+                string stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[i].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+                return new string($"A következő derűs idő {stamp}-kor várható.");
+            }
+
+        }
+        return "Nem várható derűs idő a következő öt napban.";
+    }
+    public static string GetNextRain(string city)
+    {
+        string json = Weather.GetForecastJson(city);
+        JsonDocument jsondoc = JsonDocument.Parse(json);
+        JsonElement root = jsondoc.RootElement;
+        for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
+        {
+            if (root.GetProperty("list")[i].GetProperty("weather")[0].GetProperty("main").ToString() == "Rain")
+            {
+                string stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[i].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+                return new string($"A következő eső {stamp}-kor várható.");
+            }
+
+        }
+        return "Nem várható eső a következő öt napban.";
+    }
+    public static string GetNextSnow(string city)
+    {
+        string json = Weather.GetForecastJson(city);
+        JsonDocument jsondoc = JsonDocument.Parse(json);
+        JsonElement root = jsondoc.RootElement;
+        for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
+        {
+            if (root.GetProperty("list")[i].GetProperty("weather")[0].GetProperty("main").ToString() == "Snow")
+            {
+                string stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[i].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+                return new string($"A következő havazás {stamp}-kor várható.");
+            }
+
+        }
+        return "Nem várható havazás a következő öt napban.";
     }
     public static EmbedBuilder? GetWeatherDataForCity(string city)
     {

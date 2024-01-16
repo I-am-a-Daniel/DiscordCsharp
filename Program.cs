@@ -47,6 +47,21 @@ class Program
             .WithType(ApplicationCommandOptionType.String)
             .WithDescription("településnév")
             .WithRequired(true));
+        await CommandHandler.RegisterCommand("nextclear", "A legkorábbi időpontot mutatja meg, mikor derűs idő várható", new SlashCommandOptionBuilder()
+            .WithName("település")
+            .WithType(ApplicationCommandOptionType.String)
+            .WithDescription("településnév")
+            .WithRequired(true));
+        await CommandHandler.RegisterCommand("nextrain", "A legkorábbi időpontot mutatja meg, mikor esős idő várható", new SlashCommandOptionBuilder()
+            .WithName("település")
+            .WithType(ApplicationCommandOptionType.String)
+            .WithDescription("településnév")
+            .WithRequired(true));
+        await CommandHandler.RegisterCommand("nextsnow", "A legkorábbi időpontot mutatja meg, mikor havazás várható", new SlashCommandOptionBuilder()
+            .WithName("település")
+            .WithType(ApplicationCommandOptionType.String)
+            .WithDescription("településnév")
+            .WithRequired(true));
         await CommandHandler.RegisterCommand("pong", "Debug Feature");
         await CommandHandler.RegisterCommand("wr", "Időjárás lekérdezése", new SlashCommandOptionBuilder()
             .WithName("település")
