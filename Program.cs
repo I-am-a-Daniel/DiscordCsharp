@@ -37,6 +37,16 @@ class Program
     public async Task Client_Ready()
     {
         Console.WriteLine("Parancsok betöltése...");
+        await CommandHandler.RegisterCommand("coldest", "Leghidegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
+            .WithName("település")
+            .WithType(ApplicationCommandOptionType.String)
+            .WithDescription("településnév")
+            .WithRequired(true));
+        await CommandHandler.RegisterCommand("hottest", "Legmelegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
+            .WithName("település")
+            .WithType(ApplicationCommandOptionType.String)
+            .WithDescription("településnév")
+            .WithRequired(true));
         await CommandHandler.RegisterCommand("pong", "Debug Feature");
         await CommandHandler.RegisterCommand("wr", "Időjárás lekérdezése", new SlashCommandOptionBuilder()
             .WithName("település")

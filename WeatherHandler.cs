@@ -1,9 +1,52 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using Discord;
 
 public class WeatherHandler
 {
-    public static EmbedBuilder? GetWeatherDataForCity(string city)       //TODO: Error handling, e.g. Non-existing location
+    public static string GetColdestTemperature(string city)
+    {
+        int temperature = 100;
+        int n = 0;
+        int temperature_temp;
+        string json = Weather.GetForecastJson(city);
+        JsonDocument jsondoc = JsonDocument.Parse(json);
+        JsonElement root = jsondoc.RootElement;
+        for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
+        {
+            temperature_temp = Convert.ToInt32(root.GetProperty("list")[i].GetProperty("main").GetProperty("temp").GetDouble() - 273);
+            if (temperature_temp < temperature)
+            {
+                temperature = temperature_temp;
+                n = i;
+            }
+        }
+        string? stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+        return new string ($"A következő 5 napban {stamp}-kor lesz a leghidegebb, {temperature} °C.");
+
+    }
+    public static string GetHottestTemperature(string city)
+    {
+        int temperature = -100;
+        int n = 0;
+        int temperature_temp;
+        string json = Weather.GetForecastJson(city);
+        JsonDocument jsondoc = JsonDocument.Parse(json);
+        JsonElement root = jsondoc.RootElement;
+        for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
+        {
+            temperature_temp = Convert.ToInt32(root.GetProperty("list")[i].GetProperty("main").GetProperty("temp").GetDouble() - 273);
+            if (temperature_temp > temperature)
+            {
+                temperature = temperature_temp;
+                n = i;
+            }
+        }
+        string? stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+        return new string($"A következő 5 napban {stamp}-kor lesz a leghidegebb, {temperature} °C.");
+
+    }
+    public static EmbedBuilder? GetWeatherDataForCity(string city)
     {
         string json;
         try

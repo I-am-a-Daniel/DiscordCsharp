@@ -8,7 +8,11 @@ public class CommandHandler
     {
         switch (command.Data.Name)
         {
-            case "ping":
+            case "coldest":
+                await command.RespondAsync(WeatherHandler.GetColdestTemperature((string)command.Data.Options.First().Value)); break;
+            case "hottest":
+                await command.RespondAsync(WeatherHandler.GetHottestTemperature((string)command.Data.Options.First().Value)); break;
+            case "pong":
                 await command.RespondAsync("Pong"); break;
             case "wr":
                 if (command.Data.Options.Count == 1) //Nincs forecast
@@ -53,6 +57,7 @@ public class CommandHandler
         try
         {
             await Program._client.CreateGlobalApplicationCommandAsync(commandBuilder.Build());
+            Console.WriteLine($"DEBUG: {commandBuilder.Name} betöltve.");
         }
         catch (HttpException exception)
         {
