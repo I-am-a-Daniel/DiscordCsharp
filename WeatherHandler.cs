@@ -9,7 +9,7 @@ public class WeatherHandler
         int temperature = 100;
         int n = 0;
         int temperature_temp;
-        string json = Weather.GetForecastJson(city);
+        string? json = Weather.GetForecastJson(city);
         if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
@@ -50,7 +50,7 @@ public class WeatherHandler
     }
     public static string GetNextClear(string city)
     {
-        string json = Weather.GetForecastJson(city);
+        string? json = Weather.GetForecastJson(city);
         if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
@@ -67,7 +67,7 @@ public class WeatherHandler
     }
     public static string GetNextRain(string city)
     {
-        string json = Weather.GetForecastJson(city);
+        string? json = Weather.GetForecastJson(city);
         if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
@@ -84,7 +84,7 @@ public class WeatherHandler
     }
     public static string GetNextSnow(string city)
     {
-        string json = Weather.GetForecastJson(city);
+        string? json = Weather.GetForecastJson(city);
         if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
