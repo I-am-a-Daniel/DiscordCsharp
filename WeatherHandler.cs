@@ -45,7 +45,7 @@ public class WeatherHandler
             }
         }
         string? stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
-        return new string($"A következő 5 napban {stamp}-kor lesz a leghidegebb, {temperature} °C.");
+        return new string($"A következő 5 napban {stamp}-kor lesz a legmelegebb, {temperature} °C.");
 
     }
     public static string GetNextClear(string city)
