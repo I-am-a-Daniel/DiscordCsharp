@@ -12,8 +12,15 @@ public class Weather
     public static string GetForecastJson(string city)
     {
         string url = $"http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={apikey}&lang=hu";
-        var json = new WebClient().DownloadString(url);
-        return json;
+        try
+        {
+            var json = new WebClient().DownloadString(url);
+            return json;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
 

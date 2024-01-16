@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 using Discord;
 
 public class WeatherHandler
@@ -9,6 +10,7 @@ public class WeatherHandler
         int n = 0;
         int temperature_temp;
         string json = Weather.GetForecastJson(city);
+        if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
         for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
@@ -29,7 +31,8 @@ public class WeatherHandler
         int temperature = -100;
         int n = 0;
         int temperature_temp;
-        string json = Weather.GetForecastJson(city);
+        string? json = Weather.GetForecastJson(city);
+        if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
         for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
@@ -48,6 +51,7 @@ public class WeatherHandler
     public static string GetNextClear(string city)
     {
         string json = Weather.GetForecastJson(city);
+        if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
         for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
@@ -64,6 +68,7 @@ public class WeatherHandler
     public static string GetNextRain(string city)
     {
         string json = Weather.GetForecastJson(city);
+        if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
         for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
@@ -80,6 +85,7 @@ public class WeatherHandler
     public static string GetNextSnow(string city)
     {
         string json = Weather.GetForecastJson(city);
+        if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
         for (int i = 0; i < root.GetProperty("cnt").GetInt32(); i++)
@@ -96,7 +102,7 @@ public class WeatherHandler
     public static EmbedBuilder? GetWeatherDataForCity(string city)
     {
         string json;
-        try
+        try                                                            //EmbedBuilder miatt itt és a forecastnál egyelőre más errorkezelés lesz 
         {
            json = Weather.GetCurrentWeatherJson(city); 
         }
@@ -127,6 +133,14 @@ public class WeatherHandler
     public static EmbedBuilder GetWeatherForecastForCity(string city, int hour)
     {
         string json = Weather.GetForecastJson(city);
+        try
+        {
+            json = Weather.GetCurrentWeatherJson(city);
+        }
+        catch (System.Net.WebException)
+        {
+            return null;
+        }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
         Location location = new Location();
