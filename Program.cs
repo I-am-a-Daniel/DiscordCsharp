@@ -30,6 +30,7 @@ class Program
             return Task.CompletedTask;
         };
         _client.SlashCommandExecuted += CommandHandler.Execute;
+        _client.ButtonExecuted += InteractionHandler.HandleButtonPress;
         
         await Task.Delay(-1);
     }
@@ -42,6 +43,7 @@ class Program
             .WithType(ApplicationCommandOptionType.String)
             .WithDescription("településnév")
             .WithRequired(true));
+        await CommandHandler.RegisterCommand("dice", "Kockajáték indítása");
         await CommandHandler.RegisterCommand("hottest", "Legmelegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)

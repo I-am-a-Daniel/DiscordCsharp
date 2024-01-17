@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Discord;
 
 public class WeatherHandler
@@ -130,7 +129,7 @@ public class WeatherHandler
 
     }
 
-    public static EmbedBuilder GetWeatherForecastForCity(string city, int hour)
+    public static EmbedBuilder? GetWeatherForecastForCity(string city, int hour)
     {
         string json = Weather.GetForecastJson(city);
         try

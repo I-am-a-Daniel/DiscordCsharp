@@ -10,6 +10,8 @@ public class CommandHandler
         {
             case "coldest":
                 await command.RespondAsync(WeatherHandler.GetColdestTemperature((string)command.Data.Options.First().Value)); break;
+            case "dice":
+                await DiceGameManager.HandleDiceCommand(command); break;        //Ez így valóban nem szép. De működik.
             case "hottest":
                 await command.RespondAsync(WeatherHandler.GetHottestTemperature((string)command.Data.Options.First().Value)); break;
             case "nextclear":
