@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.VisualBasic;
 
 public class DiceGameManager
 {
@@ -82,8 +83,8 @@ public class DiceGameManager
                 gathering = 0,
                 total = 0
             };
-
             players.Add(newPlayer);
+            await component.RespondAsync($"{newPlayer.name} csatlakozott a játékhoz.");
         }
         else
         {
@@ -96,8 +97,13 @@ public class DiceGameManager
         {
             activePlayer = rng.Next(0, players.Count);
             current_phase = GamePhase.PHASE_PLAYING;
-            await component.RespondAsync($"Kezdődik a kocskajáték!\nA játékot {players[activePlayer].name} kezdi", components: gameBuilder.Build());
-            await component.Message.DeleteAsync();
+            
+            await component.Message.ModifyAsync(msg =>
+            {
+                msg.Content = $"Kezdődik a kocskajáték!\nA játékot {players[activePlayer].name} kezdi";
+                msg.Components = gameBuilder.Build();
+            });
+            await component.DeferAsync();
         }
         else
         {
@@ -124,7 +130,12 @@ public class DiceGameManager
                 players[activePlayer].gathering += current_throw;
                 if (players[activePlayer].gathering + players[activePlayer].total < target)
                 {
-                    await component.RespondAsync($"A dobott szám: {current_throw}, eddigi pontszám: {players[activePlayer].gathering} | Összesen: {players[activePlayer].gathering + players[activePlayer].total}", components: gameBuilder.Build());
+                    await component.Message.ModifyAsync(msg =>
+                    {
+                        msg.Content = $"A dobott szám: {current_throw}, eddigi pontszám: {players[activePlayer].gathering} | Összesen: {players[activePlayer].gathering + players[activePlayer].total}";
+                        msg.Components = gameBuilder.Build();
+                    });
+                    await component.DeferAsync();   // Mert ha csak editelgetem az előző üzenetet, várni fog vmi responseot is, ami ilyenkor nincs.
                 }
                 else            //Játék vége handling ide
                 {
@@ -135,7 +146,11 @@ public class DiceGameManager
                     {
                         endresponse += $"{plyr.name}: {plyr.total} pont | ";
                     }
-                    await component.RespondAsync(endresponse);
+                    await component.Message.ModifyAsync(msg =>
+                    {
+                        msg.Content = endresponse;
+                        msg.Components = null;
+                    });
                     ResetGame();
                 }
             }
@@ -151,10 +166,13 @@ public class DiceGameManager
                 {
                     activePlayer++;
                 }
-                await component.RespondAsync($"A dobott szám: 6 - elvesztetted a pontjaidat. Biztos pontjaid száma: {players[oldPlayer].total}\n{players[activePlayer].name} következik.", components: gameBuilder.Build());
-            
+                await component.Message.ModifyAsync(msg => 
+                {
+                    msg.Content = $"A dobott szám: 6 - elvesztetted a pontjaidat. Biztos pontjaid száma: {players[oldPlayer].total}";
+                    msg.Components = null;
+                });
+                await component.RespondAsync($"{players[activePlayer].name} következik. Eddig {players[activePlayer].total} pontot gyűjtött.", components: gameBuilder.Build());
             }
-            await component.Message.DeleteAsync();      // Ezáltal _elméletileg_ nem lehet bugoltatni az előző dobások reakcióit.
         }
     }
     public static async Task OnDiceStopButtonClicked(SocketMessageComponent component)
@@ -181,8 +199,12 @@ public class DiceGameManager
             {
                 activePlayer++;
             }
-            await component.RespondAsync($"Elmentetted a pontjaidat - összesen {players[oldPlayer].total}-t szereztél.\n{players[activePlayer].name} következik.", components: gameBuilder.Build());
-            await component.Message.DeleteAsync();
+            await component.Message.ModifyAsync(msg =>
+            {
+                msg.Content = $"{players[oldPlayer].name} elmentette a pontjait, eddig {players[oldPlayer].total}-t szerzett.";
+                msg.Components = null;
+            });
+            await component.RespondAsync($"{players[activePlayer].name} következik. Eddig {players[activePlayer].total} pontot gyűjtött.", components: gameBuilder.Build());
         }
     }
 }
