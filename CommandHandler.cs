@@ -41,7 +41,7 @@ public class CommandHandler
                 }
                 else                                //Van forecast
                 {
-                    var temp = command.Data.Options.FirstOrDefault(param => param.Name == "forecast").Value;
+                    var temp = command.Data.Options.FirstOrDefault(param => param.Name == "előrejelzés").Value;
                     int hours = Convert.ToInt32(temp);
                     if (hours > 100 || hours < 0)
                     {

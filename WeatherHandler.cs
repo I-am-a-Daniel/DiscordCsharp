@@ -132,10 +132,10 @@ public class WeatherHandler
 
     public static EmbedBuilder? GetWeatherForecastForCity(string city, int hour)
     {
-        string json = Weather.GetForecastJson(city);
+        string json;// = Weather.GetForecastJson(city);
         try
         {
-            json = Weather.GetCurrentWeatherJson(city);
+            json = Weather.GetForecastJson(city);
         }
         catch (System.Net.WebException)
         {
