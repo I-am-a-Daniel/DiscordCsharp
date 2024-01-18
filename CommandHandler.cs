@@ -14,7 +14,24 @@ public class CommandHandler
             case "coldest":
                 await command.RespondAsync(WeatherHandler.GetColdestTemperature((string)command.Data.Options.First().Value)); break;
             case "dice":
-                await DiceGameManager.HandleDiceCommand(command); break;        //Ez így valóban nem szép. De működik.
+                if (command.Data.Options.Count > 0)
+                {
+                    int pts = Convert.ToInt32(command.Data.Options.First().Value);
+                    if (pts < 20 || pts > 100)
+                    {
+                        await command.RespondAsync("20 és 100 közötti értéket adj meg!", ephemeral: true);
+                    }
+                    else
+                    {
+                        await DiceGameManager.HandleDiceCommand(command, pts);
+                    }
+
+                }
+                else
+                {
+                    await DiceGameManager.HandleDiceCommand(command);
+                }
+                break;
             case "hottest":
                 await command.RespondAsync(WeatherHandler.GetHottestTemperature((string)command.Data.Options.First().Value)); break;
             case "nextclear":

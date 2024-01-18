@@ -43,7 +43,11 @@ class Program
             .WithType(ApplicationCommandOptionType.String)
             .WithDescription("településnév")
             .WithRequired(true));
-        await CommandHandler.RegisterCommand("dice", "Kockajáték indítása");
+        await CommandHandler.RegisterCommand("dice", "Kockajáték indítása", new SlashCommandOptionBuilder()
+            .WithName("target")
+            .WithType(ApplicationCommandOptionType.Integer)
+            .WithDescription("Ennyi pontot kell elérni a nyeréshez (20-100)")
+            .WithRequired(false));
         await CommandHandler.RegisterCommand("hottest", "Legmelegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)

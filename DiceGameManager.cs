@@ -27,6 +27,7 @@ public class DiceGameManager
     public static Random rng = new Random();
     public static int activePlayer = 0;
     public static int oldPlayer = 0; // Átmenetileg itt tároljuk az előző playert, ha egyszerre írjuk ki a következőt és a mostanit
+    public static int target = 0;
 
     public static void ResetGame()
     {
@@ -34,6 +35,7 @@ public class DiceGameManager
         players.Clear();
         activePlayer = 0;
         oldPlayer = 0;
+        target = 0;
     }
 
     public static ComponentBuilder gameBuilder = new ComponentBuilder()
@@ -41,7 +43,7 @@ public class DiceGameManager
         .WithButton("🛑", "dice_stop", ButtonStyle.Danger);
 
     [Command("dice")]
-    public static async Task HandleDiceCommand(SocketSlashCommand command)  
+    public static async Task HandleDiceCommand(SocketSlashCommand command, int pts = 66)  
     {
         var lobbyBuilder = new ComponentBuilder()
             .WithButton("Csatlakozás", "dice_join")
@@ -49,7 +51,7 @@ public class DiceGameManager
         switch (current_phase)
         {
             case GamePhase.PHASE_STANDBY:
-                await command.RespondAsync($"{command.User.GlobalName} új kockajátékot indítiott!", components: lobbyBuilder.Build());
+                await command.RespondAsync($"{command.User.GlobalName} új kockajátékot indítiott! A cél {pts} pont elérése", components: lobbyBuilder.Build());
                 Player player = new Player                            // Ez itt elvileg nem duplikálhatja a playert később, mivel amint lefut, phase-t váltunk, és onnantól már ellenőrzi, csatlakozott-e
                 {
                     name = command.User.GlobalName,
@@ -57,6 +59,7 @@ public class DiceGameManager
                     total = 0,
                 };
                 players.Add(player);
+                target = pts;
                 current_phase = GamePhase.PHASE_CREATING_LOBBY;
                 break;
             case GamePhase.PHASE_CREATING_LOBBY:
@@ -119,13 +122,13 @@ public class DiceGameManager
             if(current_throw != 6)
             {
                 players[activePlayer].gathering += current_throw;
-                if (players[activePlayer].gathering + players[activePlayer].total < 66)
+                if (players[activePlayer].gathering + players[activePlayer].total < target)
                 {
                     await component.RespondAsync($"A dobott szám: {current_throw}, eddigi pontszám: {players[activePlayer].gathering} | Összesen: {players[activePlayer].gathering + players[activePlayer].total}", components: gameBuilder.Build());
                 }
                 else            //Játék vége handling ide
                 {
-                    string endresponse = $"A dobott szám: {current_throw}, eddigi pontszám: {players[activePlayer].gathering} | Összesen: {players[activePlayer].gathering + players[activePlayer].total}\nElérted a 66 pontot, győztél!\nA végeredmény: ";
+                    string endresponse = $"A dobott szám: {current_throw}, eddigi pontszám: {players[activePlayer].gathering} | Összesen: {players[activePlayer].gathering + players[activePlayer].total}\nElérted a {target} pontot, győztél!\nA végeredmény: ";
                     players[activePlayer].total += players[activePlayer].gathering;
                     players[activePlayer].gathering = 0;
                     foreach (var plyr in players)
