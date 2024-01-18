@@ -1,4 +1,7 @@
-﻿public class Keys
+﻿using System;
+using System.IO;
+
+public class Keys
 {
     public class KeysNotFoundException : Exception 
     { 
