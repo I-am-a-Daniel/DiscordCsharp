@@ -9,10 +9,16 @@ namespace DiscordBot;
 
 public class CommandHandler
 {
-    private readonly DiceGameManager _diceGameManager = new();
+    private readonly DiceGameManager _diceGameManager;
 
-    private readonly WeatherHandler _weatherHandler = new();
-    
+    private readonly WeatherHandler _weatherHandler;
+
+    public CommandHandler(DiceGameManager diceGameManager, WeatherHandler weatherHandler)
+    {
+        _diceGameManager = diceGameManager;
+        _weatherHandler = weatherHandler;
+    }
+
     public async Task Execute(SocketSlashCommand command)
     {
         switch (command.Data.Name)

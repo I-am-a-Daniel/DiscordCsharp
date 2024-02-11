@@ -7,8 +7,13 @@ namespace DiscordBot;
 
 public class WeatherHandler
 {
-    private readonly WeatherClient _weatherClient = new();
-    
+    private readonly WeatherClient _weatherClient;
+
+    public WeatherHandler(WeatherClient weatherClient)
+    {
+        _weatherClient = weatherClient;
+    }
+
     public string GetColdestTemperature(string city)
     {
         int temperature = 100;

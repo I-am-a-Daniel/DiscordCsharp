@@ -5,8 +5,13 @@ namespace DiscordBot;
 
 public class InteractionHandler
 {
-    private readonly DiceGameManager _diceGameManager = new();
-    
+    private readonly DiceGameManager _diceGameManager;
+
+    public InteractionHandler(DiceGameManager diceGameManager)
+    {
+        _diceGameManager = diceGameManager;
+    }
+
     public async Task HandleButtonPress(SocketMessageComponent component)
     {
         switch(component.Data.CustomId)
