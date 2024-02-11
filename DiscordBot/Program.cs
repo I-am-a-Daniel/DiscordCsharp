@@ -11,6 +11,8 @@ class Program
     
     private readonly CommandHandler _commandHandler = new();
 
+    private readonly InteractionHandler _interactionHandler = new();
+
     static async Task Main(string[] args)
     {
         var program = new Program();
@@ -33,7 +35,7 @@ class Program
             await Client_Ready(_client);
         };
         _client.SlashCommandExecuted += _commandHandler.Execute;
-        _client.ButtonExecuted += InteractionHandler.HandleButtonPress;
+        _client.ButtonExecuted += _interactionHandler.HandleButtonPress;
         
         await Task.Delay(-1);
     }

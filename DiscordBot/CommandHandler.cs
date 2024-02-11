@@ -9,6 +9,8 @@ namespace DiscordBot;
 
 public class CommandHandler
 {
+    private readonly DiceGameManager _diceGameManager = new();
+    
     public async Task Execute(SocketSlashCommand command)
     {
         switch (command.Data.Name)
@@ -25,13 +27,13 @@ public class CommandHandler
                     }
                     else
                     {
-                        await DiceGameManager.HandleDiceCommand(command, pts);
+                        await _diceGameManager.HandleDiceCommand(command, pts);
                     }
 
                 }
                 else
                 {
-                    await DiceGameManager.HandleDiceCommand(command);
+                    await _diceGameManager.HandleDiceCommand(command);
                 }
                 break;
             case "hottest":
