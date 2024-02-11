@@ -7,7 +7,13 @@ class Program
 {
     static async Task Main(string[] args)
     {
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+        
         var serviceProvider = new ServiceCollection()
+            .Configure<OWMSettings>(options => configuration.GetSection("OWM").Bind(options))
+            .Configure<DiscordSettings>(options => configuration.GetSection("Discord").Bind(options))
             .AddSingleton<WeatherClient>()
             .AddSingleton<DiceGameManager>()
             .AddSingleton<WeatherHandler>()

@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using DiscordBot.Settings;
+using Microsoft.Extensions.Options;
 
 namespace DiscordBot;
 
@@ -13,20 +15,24 @@ public class Container
 
     private readonly InteractionHandler _interactionHandler;
 
-    public Container(CommandHandler commandHandler, InteractionHandler interactionHandler)
+    private readonly DiscordSettings _discordSettings;
+
+    public Container(
+        CommandHandler commandHandler,
+        InteractionHandler interactionHandler,
+        IOptions<DiscordSettings> discordSettings)
     {
         _commandHandler = commandHandler;
         _interactionHandler = interactionHandler;
+        _discordSettings = discordSettings.Value;
         _client = new DiscordSocketClient();
     }
 
     public async Task RunBotAsync()
     {
         _client.Log += LogAsync;
-        Keys.Read();
 
-
-        await _client.LoginAsync(TokenType.Bot, Keys.main);
+        await _client.LoginAsync(TokenType.Bot, _discordSettings.ApiKey);
         await _client.StartAsync();
         _client.Ready += async () =>
         {
