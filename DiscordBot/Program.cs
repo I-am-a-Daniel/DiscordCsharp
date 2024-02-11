@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using DiscordBot.Settings;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordBot
