@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using Discord;
+using DiscordBot.Extensions;
 
 public class WeatherHandler
 {
@@ -22,7 +23,8 @@ public class WeatherHandler
                 n = i;
             }
         }
-        string? stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+
+        var stamp = double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString()).ToHungarianForm();
         return new string ($"A következő 5 napban {stamp}-kor lesz a leghidegebb, {temperature} °C.");
 
     }
@@ -44,7 +46,8 @@ public class WeatherHandler
                 n = i;
             }
         }
-        string? stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+
+        var stamp = double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString()).ToHungarianForm();
         return new string($"A következő 5 napban {stamp}-kor lesz a legmelegebb, {temperature} °C.");
 
     }
@@ -58,7 +61,7 @@ public class WeatherHandler
         {
             if (root.GetProperty("list")[i].GetProperty("weather")[0].GetProperty("main").ToString() == "Clear")
             {
-                string stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[i].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+                var stamp = double.Parse(root.GetProperty("list")[i].GetProperty("dt").ToString()).ToHungarianForm();
                 return new string($"A következő derűs idő {stamp}-kor várható.");
             }
 
@@ -75,7 +78,7 @@ public class WeatherHandler
         {
             if (root.GetProperty("list")[i].GetProperty("weather")[0].GetProperty("main").ToString() == "Rain")
             {
-                string stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[i].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+                var stamp = double.Parse(root.GetProperty("list")[i].GetProperty("dt").ToString()).ToHungarianForm();
                 return new string($"A következő eső {stamp}-kor várható.");
             }
 
@@ -92,7 +95,7 @@ public class WeatherHandler
         {
             if (root.GetProperty("list")[i].GetProperty("weather")[0].GetProperty("main").ToString() == "Snow")
             {
-                string stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[i].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";
+                var stamp = double.Parse(root.GetProperty("list")[i].GetProperty("dt").ToString()).ToHungarianForm();
                 return new string($"A következő havazás {stamp}-kor várható.");
             }
 
@@ -150,7 +153,7 @@ public class WeatherHandler
         location.WindForecast = GetWindSpeedText(Convert.ToInt32(root.GetProperty("list")[n].GetProperty("wind").GetProperty("speed").GetDouble() * 3.6)) ?? "Szélcsend";
         location.Icon = $"https://openweathermap.org/img/wn/{root.GetProperty("list")[n].GetProperty("weather")[0].GetProperty("icon")}@2x.png";
         location.Name = root.GetProperty("city").GetProperty("name").ToString();
-        string? stamp = Utilities.Timestamp2String(double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString())) ?? "Ismeretlen időpont";     //!!Ez dt és nem dt_txt mint a python botban, jó volt erre is elbaszni fél órát. - TODO kitalálni, hogy ott miért működött egyáltalán
+        string? stamp = double.Parse(root.GetProperty("list")[n].GetProperty("dt").ToString()).ToHungarianForm();     //!!Ez dt és nem dt_txt mint a python botban, jó volt erre is elbaszni fél órát. - TODO kitalálni, hogy ott miért működött egyáltalán
         var response = new EmbedBuilder()
             .WithTitle($"Előrejelzés {location.Name} területére")
             .WithDescription($"{location.Weather}, {location.Temperature} °C. {location.WindForecast}.")
