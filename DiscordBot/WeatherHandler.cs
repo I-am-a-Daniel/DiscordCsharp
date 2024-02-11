@@ -3,14 +3,18 @@ using System.Text.Json;
 using Discord;
 using DiscordBot.Extensions;
 
+namespace DiscordBot;
+
 public class WeatherHandler
 {
-    public static string GetColdestTemperature(string city)
+    private readonly WeatherClient _weatherClient = new();
+    
+    public string GetColdestTemperature(string city)
     {
         int temperature = 100;
         int n = 0;
         int temperature_temp;
-        string? json = Weather.GetForecastJson(city);
+        string? json = _weatherClient.GetForecastJson(city);
         if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
@@ -28,12 +32,12 @@ public class WeatherHandler
         return new string ($"A következő 5 napban {stamp}-kor lesz a leghidegebb, {temperature} °C.");
 
     }
-    public static string GetHottestTemperature(string city)
+    public string GetHottestTemperature(string city)
     {
         int temperature = -100;
         int n = 0;
         int temperature_temp;
-        string? json = Weather.GetForecastJson(city);
+        string? json = _weatherClient.GetForecastJson(city);
         if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
@@ -51,9 +55,9 @@ public class WeatherHandler
         return new string($"A következő 5 napban {stamp}-kor lesz a legmelegebb, {temperature} °C.");
 
     }
-    public static string GetNextClear(string city)
+    public string GetNextClear(string city)
     {
-        string? json = Weather.GetForecastJson(city);
+        string? json = _weatherClient.GetForecastJson(city);
         if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
@@ -68,9 +72,9 @@ public class WeatherHandler
         }
         return "Nem várható derűs idő a következő öt napban.";
     }
-    public static string GetNextRain(string city)
+    public string GetNextRain(string city)
     {
-        string? json = Weather.GetForecastJson(city);
+        string? json = _weatherClient.GetForecastJson(city);
         if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
@@ -85,9 +89,9 @@ public class WeatherHandler
         }
         return "Nem várható eső a következő öt napban.";
     }
-    public static string GetNextSnow(string city)
+    public string GetNextSnow(string city)
     {
-        string? json = Weather.GetForecastJson(city);
+        string? json = _weatherClient.GetForecastJson(city);
         if (json == null) { return new string("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
@@ -102,12 +106,12 @@ public class WeatherHandler
         }
         return "Nem várható havazás a következő öt napban.";
     }
-    public static EmbedBuilder? GetWeatherDataForCity(string city)
+    public EmbedBuilder? GetWeatherDataForCity(string city)
     {
         string json;
         try                                                            //EmbedBuilder miatt itt és a forecastnál egyelőre más errorkezelés lesz 
         {
-           json = Weather.GetCurrentWeatherJson(city); 
+            json = _weatherClient.GetCurrentWeatherJson(city); 
         }
         catch (System.Net.WebException)
         {
@@ -133,12 +137,12 @@ public class WeatherHandler
 
     }
 
-    public static EmbedBuilder? GetWeatherForecastForCity(string city, int hour)
+    public EmbedBuilder? GetWeatherForecastForCity(string city, int hour)
     {
         string json;// = Weather.GetForecastJson(city);
         try
         {
-            json = Weather.GetForecastJson(city);
+            json = _weatherClient.GetForecastJson(city);
         }
         catch (System.Net.WebException)
         {
@@ -174,7 +178,7 @@ public class WeatherHandler
         public string? WindForecast { get; set; }
     }
 
-    public static string GetWindDirString(int deg)
+    private static string GetWindDirString(int deg)
     {
         string direction = "";
         if (deg > 337 || deg <= 22)
@@ -195,7 +199,8 @@ public class WeatherHandler
             direction = "Északnyugati";
         return direction;
     }
-    public static string GetWindSpeedText(int speed)
+
+    private static string GetWindSpeedText(int speed)
     {
         string text = "";
         if (speed < 5) text = "Szélcsend";
@@ -206,4 +211,3 @@ public class WeatherHandler
         return text;
     }
 }
-

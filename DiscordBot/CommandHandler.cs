@@ -10,13 +10,15 @@ namespace DiscordBot;
 public class CommandHandler
 {
     private readonly DiceGameManager _diceGameManager = new();
+
+    private readonly WeatherHandler _weatherHandler = new();
     
     public async Task Execute(SocketSlashCommand command)
     {
         switch (command.Data.Name)
         {
             case "coldest":
-                await command.RespondAsync(WeatherHandler.GetColdestTemperature((string)command.Data.Options.First().Value)); break;
+                await command.RespondAsync(_weatherHandler.GetColdestTemperature((string)command.Data.Options.First().Value)); break;
             case "dice":
                 if (command.Data.Options.Count > 0)
                 {
@@ -37,23 +39,23 @@ public class CommandHandler
                 }
                 break;
             case "hottest":
-                await command.RespondAsync(WeatherHandler.GetHottestTemperature((string)command.Data.Options.First().Value)); break;
+                await command.RespondAsync(_weatherHandler.GetHottestTemperature((string)command.Data.Options.First().Value)); break;
             case "nextclear":
             //case "nextsun":               //TODO: Implement alias handling in RegisterCommand()
-                await command.RespondAsync(WeatherHandler.GetNextClear((string)command.Data.Options.First().Value)); break;
+                await command.RespondAsync(_weatherHandler.GetNextClear((string)command.Data.Options.First().Value)); break;
             case "nextrain":
-                await command.RespondAsync(WeatherHandler.GetNextRain((string)command.Data.Options.First().Value)); break;
+                await command.RespondAsync(_weatherHandler.GetNextRain((string)command.Data.Options.First().Value)); break;
             case "nextsnow":
-                await command.RespondAsync(WeatherHandler.GetNextSnow((string)command.Data.Options.First().Value)); break;
+                await command.RespondAsync(_weatherHandler.GetNextSnow((string)command.Data.Options.First().Value)); break;
             case "pong":
                 await command.RespondAsync("Pong"); break;
             case "wr":
                 if (command.Data.Options.Count == 1) //Nincs forecast
                 {
-                    var response = WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value);
+                    var response = _weatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value);
                     if (response != null)
                     {
-                        await command.RespondAsync(embed: WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build()); //FIXME: Reklamál, hogy possible null reference.
+                        await command.RespondAsync(embed: _weatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build()); //FIXME: Reklamál, hogy possible null reference.
                     }
                     else
                     {
@@ -69,7 +71,7 @@ public class CommandHandler
                         await command.RespondAsync("3 és 100 óra közötti időtávot adj meg.", ephemeral: true);
                     }
                     else
-                        await command.RespondAsync(embed: WeatherHandler.GetWeatherForecastForCity((string)command.Data.Options.First().Value, hours).Build());
+                        await command.RespondAsync(embed: _weatherHandler.GetWeatherForecastForCity((string)command.Data.Options.First().Value, hours).Build());
                 }
                 break;
             default:
