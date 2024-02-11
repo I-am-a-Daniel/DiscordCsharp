@@ -1,13 +1,15 @@
-﻿using Discord;
-using Discord.Net;
-using Discord.WebSocket;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Discord;
+using Discord.Net;
+using Discord.WebSocket;
+
+namespace DiscordBot;
 
 public class CommandHandler
 {
-    public static async Task Execute(SocketSlashCommand command)
+    public async Task Execute(SocketSlashCommand command)
     {
         switch (command.Data.Name)
         {
@@ -72,7 +74,7 @@ public class CommandHandler
                 await command.RespondAsync("Valami nem jó"); break;
         }
     }
-    public static async Task RegisterCommand(DiscordSocketClient client, string name, string description, params SlashCommandOptionBuilder[] options)
+    public async Task RegisterCommand(DiscordSocketClient client, string name, string description, params SlashCommandOptionBuilder[] options)
     {
         var commandBuilder = new SlashCommandBuilder()
             .WithName(name)
@@ -94,4 +96,3 @@ public class CommandHandler
         }
     }
 }
-
