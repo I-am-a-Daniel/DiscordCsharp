@@ -1,6 +1,7 @@
-﻿namespace DiscordBot.Settings;
-
-public class OWMSettings
+﻿namespace DiscordBot.Settings
 {
-    public string ApiKey { get; set; }
+    public class OWMSettings
+    {
+        public string ApiKey { get; set; }
+    }
 }
