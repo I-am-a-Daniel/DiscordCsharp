@@ -72,7 +72,7 @@ public class CommandHandler
                 await command.RespondAsync("Valami nem jó"); break;
         }
     }
-    public static async Task RegisterCommand(string name, string description, params SlashCommandOptionBuilder[] options)
+    public static async Task RegisterCommand(DiscordSocketClient client, string name, string description, params SlashCommandOptionBuilder[] options)
     {
         var commandBuilder = new SlashCommandBuilder()
             .WithName(name)
@@ -85,7 +85,7 @@ public class CommandHandler
 
         try
         {
-            await Program._client.CreateGlobalApplicationCommandAsync(commandBuilder.Build());
+            await client.CreateGlobalApplicationCommandAsync(commandBuilder.Build());
             Console.WriteLine($"DEBUG: {commandBuilder.Name} betöltve.");
         }
         catch (HttpException exception)

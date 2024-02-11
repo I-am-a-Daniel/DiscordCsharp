@@ -14,7 +14,7 @@ class Program
         await program.RunBotAsync();
     }
 
-    public async Task RunBotAsync()
+    private async Task RunBotAsync()
     {
         _client = new DiscordSocketClient();
         _client.Log += LogAsync;
@@ -23,11 +23,11 @@ class Program
 
         await _client.LoginAsync(TokenType.Bot, Keys.main);
         await _client.StartAsync();
-        _client.Ready += () =>
+        _client.Ready += async () =>
         {
             //Console.WriteLine("Bot successfully connected");
-            Client_Ready(); // Valami warningot ír rá mert nincs await, majd meglátjuk h baj-e
-            return Task.CompletedTask;
+            // TODO test if this works
+            await Client_Ready(_client);
         };
         _client.SlashCommandExecuted += CommandHandler.Execute;
         _client.ButtonExecuted += InteractionHandler.HandleButtonPress;
@@ -35,41 +35,41 @@ class Program
         await Task.Delay(-1);
     }
 
-    public async Task Client_Ready()
+    public async Task Client_Ready(DiscordSocketClient client)
     {
         Console.WriteLine("Parancsok betöltése...");
-        await CommandHandler.RegisterCommand("coldest", "Leghidegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
+        await CommandHandler.RegisterCommand(client, "coldest", "Leghidegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)
             .WithDescription("településnév")
             .WithRequired(true));
-        await CommandHandler.RegisterCommand("dice", "Kockajáték indítása", new SlashCommandOptionBuilder()
+        await CommandHandler.RegisterCommand(client , "dice", "Kockajáték indítása", new SlashCommandOptionBuilder()
             .WithName("target")
             .WithType(ApplicationCommandOptionType.Integer)
             .WithDescription("Ennyi pontot kell elérni a nyeréshez (20-100)")
             .WithRequired(false));
-        await CommandHandler.RegisterCommand("hottest", "Legmelegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
+        await CommandHandler.RegisterCommand(client, "hottest", "Legmelegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)
             .WithDescription("településnév")
             .WithRequired(true));
-        await CommandHandler.RegisterCommand("nextclear", "A legkorábbi időpontot mutatja meg, mikor derűs idő várható", new SlashCommandOptionBuilder()
+        await CommandHandler.RegisterCommand(client, "nextclear", "A legkorábbi időpontot mutatja meg, mikor derűs idő várható", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)
             .WithDescription("településnév")
             .WithRequired(true));
-        await CommandHandler.RegisterCommand("nextrain", "A legkorábbi időpontot mutatja meg, mikor esős idő várható", new SlashCommandOptionBuilder()
+        await CommandHandler.RegisterCommand(client, "nextrain", "A legkorábbi időpontot mutatja meg, mikor esős idő várható", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)
             .WithDescription("településnév")
             .WithRequired(true));
-        await CommandHandler.RegisterCommand("nextsnow", "A legkorábbi időpontot mutatja meg, mikor havazás várható", new SlashCommandOptionBuilder()
+        await CommandHandler.RegisterCommand(client, "nextsnow", "A legkorábbi időpontot mutatja meg, mikor havazás várható", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)
             .WithDescription("településnév")
             .WithRequired(true));
-        await CommandHandler.RegisterCommand("pong", "Debug Feature");
-        await CommandHandler.RegisterCommand("wr", "Időjárás lekérdezése", new SlashCommandOptionBuilder()
+        await CommandHandler.RegisterCommand(client, "pong", "Debug Feature");
+        await CommandHandler.RegisterCommand(client, "wr", "Időjárás lekérdezése", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)
             .WithDescription("településnév")
