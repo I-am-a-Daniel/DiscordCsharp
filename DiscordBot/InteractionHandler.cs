@@ -1,30 +1,21 @@
-﻿using System.Threading.Tasks;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
+using System.Threading.Tasks;
 
-namespace DiscordBot
+public class InteractionHandler
 {
-    public class InteractionHandler
+    public static async Task HandleButtonPress(SocketMessageComponent component)
     {
-        private readonly DiceGameManager _diceGameManager;
-
-        public InteractionHandler(DiceGameManager diceGameManager)
+        switch (component.Data.CustomId)
         {
-            _diceGameManager = diceGameManager;
-        }
+            case "dice_join":
+                await DiceGameManager.OnDiceJoinButtonClicked(component); break;
+            case "dice_start":
+                await DiceGameManager.OnDiceStartButtonClicked(component); break;
+            case "dice_stop":
+                await DiceGameManager.OnDiceStopButtonClicked(component); break;
+            case "dice_throw":
+                await DiceGameManager.OnDiceThrowButtonClicked(component); break;
 
-        public async Task HandleButtonPress(SocketMessageComponent component)
-        {
-            switch (component.Data.CustomId)
-            {
-                case "dice_join":
-                    await _diceGameManager.OnDiceJoinButtonClicked(component); break;
-                case "dice_start":
-                    await _diceGameManager.OnDiceStartButtonClicked(component); break;
-                case "dice_stop":
-                    await _diceGameManager.OnDiceStopButtonClicked(component); break;
-                case "dice_throw":
-                    await _diceGameManager.OnDiceThrowButtonClicked(component); break;
-            }
         }
     }
 }
