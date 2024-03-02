@@ -45,7 +45,7 @@ public class CommandHandler
             case "hottest":
                 await command.RespondAsync(WeatherHandler.GetHottestTemperature((string)command.Data.Options.First().Value)); break;
             case "nextclear":
-            //case "nextsun":               //TODO: Implement alias handling in RegisterCommand()
+                //case "nextsun":               //TODO: Implement alias handling in RegisterCommand()
                 await command.RespondAsync(WeatherHandler.GetNextClear((string)command.Data.Options.First().Value)); break;
             case "nextrain":
                 await command.RespondAsync(WeatherHandler.GetNextRain((string)command.Data.Options.First().Value)); break;
@@ -56,12 +56,15 @@ public class CommandHandler
             case "tr":
                 string target = (string)command.Data.Options.First().Value;
                 string text = (string)command.Data.Options.FirstOrDefault(param => param.Name == "text").Value;
-
-                // Call the Translate function asynchronously
-                string translationResult = await TranslationHandlerCsharp.TranslateAsync(target, text);
-
-                // Respond with the translation result
-                await command.RespondAsync(translationResult);
+                try
+                {
+                    string translationResult = TranslationHandlerCsharp.Translate(target, text);
+                    await command.RespondAsync(translationResult);
+                }
+                catch (Exception ex)
+                {
+                    await command.RespondAsync(ex.Message);
+                } 
                 break; //Leszopom magam ha elsőre lefut
             case "wr":
                 if (command.Data.Options.Count == 1) //Nincs forecast
@@ -89,7 +92,7 @@ public class CommandHandler
                 }
                 break;
             default:
-                await command.RespondAsync("Valami nem jó"); break;
+                await command.RespondAsync("Command handler error."); break;
         }
     }
     public static async Task RegisterCommand(string name, string description, params SlashCommandOptionBuilder[] options)

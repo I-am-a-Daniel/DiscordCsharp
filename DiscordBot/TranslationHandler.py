@@ -1,6 +1,7 @@
-﻿import pygoogletranslation
-
-def Translate(tar, txt):
-    TR = pygoogletranslation.Translator()
-    result = TR.translate(txt.lower(), dest=tar).text
-    return result
+﻿# -*- coding: utf-8 -*-
+import pygoogletranslation
+TR = pygoogletranslation.Translator()
+tar = input("")
+txt = input("")
+result = TR.translate(txt.lower(), dest=tar).text
+print(result)
