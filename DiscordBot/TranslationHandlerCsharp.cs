@@ -9,7 +9,7 @@ public class TranslationHandlerCsharp
         try
         {
             using var process = new Process();
-            process.StartInfo.FileName = "python";
+            process.StartInfo.FileName = "python3";
             process.StartInfo.Arguments = $"TranslationHandler.py";
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.StandardInputEncoding = Encoding.UTF8;
