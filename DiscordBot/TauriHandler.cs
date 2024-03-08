@@ -32,7 +32,7 @@ namespace DiscordBot
                 {
                     result.AppendLine($"**{name}**: {status}, {population} játékos");
                 }
-                Console.WriteLine($"Server: {name}, Status: {status}, Population: {population}");
+                //Console.WriteLine($"Server: {name}, Status: {status}, Population: {population}");
             }
             EmbedBuilder builder = new EmbedBuilder()
                 .WithTitle("Tauri Realm információ")
