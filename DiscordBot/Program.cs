@@ -69,6 +69,7 @@ class Program
             .WithDescription("településnév")
             .WithRequired(true));
         await CommandHandler.RegisterCommand("pong", "Debug Feature");
+        await CommandHandler.RegisterCommand("sz", "Tauri szerverinfó");
         await CommandHandler.RegisterCommand("tr", "Google Transzláció", new SlashCommandOptionBuilder()
             .WithName("target")
             .WithType(ApplicationCommandOptionType.String)

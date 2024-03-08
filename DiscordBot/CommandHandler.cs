@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Net;
 using Discord.WebSocket;
+using DiscordBot;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 using Microsoft.VisualBasic;
@@ -66,6 +67,9 @@ public class CommandHandler
                     await command.RespondAsync(ex.Message);
                 } 
                 break; //Leszopom magam ha elsőre lefut
+            case "sz":
+                await command.RespondAsync(embed: TauriHandler.GetAllRealmInfo().Build());
+                break;
             case "wr":
                 if (command.Data.Options.Count == 1) //Nincs forecast
                 {
