@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -205,6 +206,47 @@ public class DiceGameManager
                 msg.Components = null;
             });
             await component.RespondAsync($"{players[activePlayer].name} következik. Eddig {players[activePlayer].total} pontot gyűjtött.", components: gameBuilder.Build());
+        }
+    }
+    public static async Task HandleQuitCommand(SocketSlashCommand command)
+    {
+        if (current_phase == GamePhase.PHASE_STANDBY)
+        {
+            await command.RespondAsync($"Nincs kockajáték folyamatban", ephemeral: true);
+        }
+        else if (!players.Any(player => player.name == command.User.GlobalName))
+        {
+            await command.RespondAsync($"Nem vagy része ennek a kockajátéknak", ephemeral: true);
+        }
+        else
+        {
+            int target = -1;
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (players[i].name == command.User.GlobalName)
+                {
+                    target = i;
+                    break;
+                }
+            }
+            if (target != -1)
+            {
+                players.RemoveAt(target);
+                if (players.Count == 0)
+                {
+                    ResetGame();
+                    await command.RespondAsync($"{command.User.Username} elhagyta a játékot.\nNem maradt több játékos, a játék véget ért.");
+                }
+                else
+                {
+                    await command.RespondAsync($"{command.User.Username} elhagyta a játékot.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Hiba! Nem sikerült kiléptetnem egy játékost a kockajátékból.");
+                await command.RespondAsync($"Sikertelen kilépési kísérlet.", ephemeral: true);
+            }
         }
     }
 }

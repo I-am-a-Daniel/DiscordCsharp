@@ -43,6 +43,9 @@ public class CommandHandler
                     await DiceGameManager.HandleDiceCommand(command);
                 }
                 break;
+            case "dicequit":
+                await DiceGameManager.HandleQuitCommand(command);
+                break;
             case "hottest":
                 await command.RespondAsync(WeatherHandler.GetHottestTemperature((string)command.Data.Options.First().Value)); break;
             case "nextclear":

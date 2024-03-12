@@ -48,6 +48,7 @@ class Program
             .WithType(ApplicationCommandOptionType.Integer)
             .WithDescription("Ennyi pontot kell elérni a nyeréshez (20-100)")
             .WithRequired(false));
+        await CommandHandler.RegisterCommand("dicequit", "Kilépés a kockajátékból");
         await CommandHandler.RegisterCommand("hottest", "Legmelegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)
