@@ -63,7 +63,7 @@ public class CommandHandler
                 try
                 {
                     string translationResult = TranslationHandlerCsharp.Translate(target, text);
-                    await command.RespondAsync($"{translationResult}\n\nEredeti szöveg: {text}");
+                    await command.RespondAsync(translationResult);
                 }
                 catch (Exception ex)
                 {
