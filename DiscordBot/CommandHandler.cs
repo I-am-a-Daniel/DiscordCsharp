@@ -55,19 +55,20 @@ public class CommandHandler
                 await command.RespondAsync(WeatherHandler.GetNextRain((string)command.Data.Options.First().Value)); break;
             case "nextsnow":
                 await command.RespondAsync(WeatherHandler.GetNextSnow((string)command.Data.Options.First().Value)); break;
-            case "pong":
+            case "ping":
                 await command.RespondAsync("Pong"); break;
             case "tr":
+                await command.DeferAsync(false);
                 string target = (string)command.Data.Options.First().Value;
                 string text = (string)command.Data.Options.FirstOrDefault(param => param.Name == "text").Value;
                 try
                 {
                     string translationResult = TranslationHandlerCsharp.Translate(target, text);
-                    await command.RespondAsync(translationResult);
+                    await command.FollowupAsync(translationResult);
                 }
                 catch (Exception ex)
                 {
-                    await command.RespondAsync(ex.Message);
+                    await command.FollowupAsync(ex.Message);
                 } 
                 break; //Leszopom magam ha elsőre lefut
             case "sz":
