@@ -40,6 +40,8 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         tag_prefix: 'v'
         tag_template: 'yyyy.mm.dd.i'
+    - name: Test
+      run: ls -al
     - name: Create release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,4 +51,4 @@ jobs:
         gh release create "$tag" \
           --repo="$GITHUB_REPOSITORY" \
           --title="${GITHUB_REPOSITORY#*/} $tag ($sha)" \
-          --generate-notes
+          --generate-notes 
