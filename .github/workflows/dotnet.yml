@@ -28,6 +28,6 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Application_Artifact
-        path: /home/runner/work/DanielDiscordBot/DanielDiscordBot/DiscordBot/release/
+        path: /home/runner/work/DanielDiscordBot/DanielDiscordBot/release/
     - name: Test
       run: dotnet test --no-build --verbosity normal
