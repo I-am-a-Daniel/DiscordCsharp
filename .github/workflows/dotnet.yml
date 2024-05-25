@@ -30,7 +30,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Application_Artifact
-        path: /home/runner/work/$GITHUB_REPOSITORY/$GITHUB_REPOSITORY/release/
+        path: ${{ github.workspace }}/release/
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Generate release tag
