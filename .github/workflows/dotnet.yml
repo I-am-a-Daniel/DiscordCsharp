@@ -31,3 +31,12 @@ jobs:
         path: /home/runner/work/DanielDiscordBot/DanielDiscordBot/release/
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Create release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.sha }}
+      run: |
+        gh release create "$tag" \
+          --repo="$GITHUB_REPOSITORY" \
+          --title="${GITHUB_REPOSITORY#*/} $tag" \
+          --generate-notes
