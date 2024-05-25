@@ -23,6 +23,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet publish --no-restore --runtime linux-arm64 --self-contained
+      run: dotnet publish --no-restore --runtime linux-arm64 --self-contained -c Release -o release
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: Application_Artifact
+        path: /home/runner/work/DanielDiscordBot/DanielDiscordBot/DiscordBot/release/
     - name: Test
       run: dotnet test --no-build --verbosity normal
