@@ -1,7 +1,7 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: Release .NET 6.0 Linux ARM64
+name: Release
 
 on:
   push:
@@ -24,12 +24,23 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet publish --no-restore --runtime linux-arm64 --self-contained -c Release -o release
-    - name: Create release zip
-      run: zip release.zip release/* -r
+    - name: Build linux-arm64
+      run: |
+          dotnet restore
+          dotnet publish --no-restore --runtime linux-arm64 --self-contained -c Release -o release_linux_arm64
+    - name: Build linux-x64
+      run: |
+          dotnet restore
+          dotnet publish --no-restore --runtime linux-x64 --self-contained -c Release -o release_linux_x64
+    - name: Build win-x64
+      run: |
+          dotnet restore
+          dotnet publish --no-restore --runtime win-x64 --self-contained -c Release -o release_win_x64
+    - name: Create release zips
+      run: |
+          zip release-linux-x64.zip release_linux_x64/* -r
+          zip release-linux-arm64.zip release_linux_arm64/* -r
+          zip release-win-x64.zip release_win_x64/* -r
     - name: Generate release tag
       id: generate_release_tag
       uses: amitsingh-007/next-release-tag@v5.0.0
@@ -48,4 +59,4 @@ jobs:
         gh release create "$tag" \
           --repo="$GITHUB_REPOSITORY" \
           --title="${GITHUB_REPOSITORY#*/} $tag ($sha)" \
-          --generate-notes release.zip
+          --generate-notes release-linux-x64.zip release-linux-arm64.zip release-win-x64.zip
