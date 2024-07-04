@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <RuntimeIdentifier>linux-arm64</RuntimeIdentifier>
+    <RuntimeIdentifiers>linux-arm64;linux-x64</RuntimeIdentifiers>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
