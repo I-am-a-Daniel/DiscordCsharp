@@ -37,9 +37,10 @@ jobs:
           dotnet restore
           dotnet publish --no-restore --runtime win-x64 --self-contained -c Release -o release_win_x64
     - name: Create release zips
-    - run: zip release-linux-x64.zip release_linux_x64/* -r
-    - run: zip release-linux-arm64.zip release_linux_arm64/* -r
-    - run: zip release-win-x64.zip release_win_x64/* -r
+      run: |
+          zip release-linux-x64.zip release_linux_x64/* -r
+          zip release-linux-arm64.zip release_linux_arm64/* -r
+          zip release-win-x64.zip release_win_x64/* -r
     - name: Generate release tag
       id: generate_release_tag
       uses: amitsingh-007/next-release-tag@v5.0.0
