@@ -22,6 +22,10 @@ public class CommandHandler
     {
         switch (command.Data.Name)
         {
+            case "bmi":
+                double height = (double)command.Data.Options.FirstOrDefault(param => param.Name == "magasság").Value;
+                double weight = (double)command.Data.Options.FirstOrDefault(param => param.Name == "testsúly").Value;
+                await command.RespondAsync(HealthHandler.CheckBMI(height, weight)); break;
             case "coldest":
                 await command.RespondAsync(WeatherHandler.GetColdestTemperature((string)command.Data.Options.First().Value)); break;
             case "dice":

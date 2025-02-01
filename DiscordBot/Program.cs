@@ -38,6 +38,16 @@ class Program
     public async Task Client_Ready()
     {
         Console.WriteLine("Parancsok betöltése...");
+        await CommandHandler.RegisterCommand("bmi", "Kiszámolja a BMI-det a magasságod és a testsúlyod alapján.", new SlashCommandOptionBuilder()
+            .WithName("magasság")
+            .WithType(ApplicationCommandOptionType.Number)
+            .WithDescription("Magasság cm-ben (150-220)")
+            .WithRequired(true),
+            new SlashCommandOptionBuilder()
+            .WithName("testsúly")
+            .WithType(ApplicationCommandOptionType.Number)
+            .WithDescription("Testsúly kg-ban (40-200)")
+            .WithRequired(true));
         await CommandHandler.RegisterCommand("coldest", "Leghidegebb hőmérséklet a következő 5 napban", new SlashCommandOptionBuilder()
             .WithName("település")
             .WithType(ApplicationCommandOptionType.String)
