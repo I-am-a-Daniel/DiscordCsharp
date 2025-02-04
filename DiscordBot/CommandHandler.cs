@@ -82,14 +82,7 @@ public class CommandHandler
                 if (command.Data.Options.Count == 1) //Nincs forecast
                 {
                     var response = WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value);
-                    if (response != null)
-                    {
-                        await command.RespondAsync(embed: WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build()); //FIXME: Reklamál, hogy possible null reference.
-                    }
-                    else
-                    {
-                        await command.RespondAsync("Nincs ilyen város");
-                    }
+                    await command.RespondAsync(embed: WeatherHandler.GetWeatherDataForCity((string)command.Data.Options.First().Value).Build()); //FIXME: Reklamál, hogy possible null reference.
                 }
                 else                                //Van forecast
                 {
