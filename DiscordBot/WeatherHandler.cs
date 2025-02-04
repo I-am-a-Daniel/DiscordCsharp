@@ -102,7 +102,7 @@ public class WeatherHandler
     public static EmbedBuilder? GetWeatherDataForCity(string city)
     {
         string json;
-        try                                                            //EmbedBuilder miatt itt és a forecastnál egyelőre más errorkezelés lesz 
+        try                                                            
         {
            json = Weather.GetCurrentWeatherJson(city); 
         }
@@ -141,7 +141,6 @@ public class WeatherHandler
         {
             return new EmbedBuilder().WithDescription("Nincs ilyen város");
         }
-        if (json == null) { return new EmbedBuilder().WithDescription("Nincs ilyen város"); }
         JsonDocument jsondoc = JsonDocument.Parse(json);
         JsonElement root = jsondoc.RootElement;
         Location location = new Location();
